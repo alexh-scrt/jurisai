@@ -36,6 +36,12 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
     # Add subcommands
     subparsers = parser.add_subparsers(dest="command", help="Commands")
     
+    # Web UI command
+    web_parser = subparsers.add_parser("web", help="Launch the web interface")
+    web_parser.add_argument(
+        "--port", type=int, default=8501, help="Port to run the web server on"
+    )
+    
     # Analyze command
     analyze_parser = subparsers.add_parser("analyze", help="Analyze legal documents")
     analyze_parser.add_argument("file", help="File to analyze")
@@ -67,7 +73,33 @@ def main(args: Optional[List[str]] = None) -> int:
     
     try:
         # Run the appropriate command
-        if parsed_args.command == "analyze":
+        if parsed_args.command == "web":
+            logger.info("Launching web interface", port=parsed_args.port)
+            # Launch Streamlit app
+            import subprocess
+            import os
+            
+            # Get the path to the Streamlit app
+            streamlit_app_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "api",
+                "streamlit_app.py"
+            )
+            
+            # Run Streamlit as a subprocess
+            cmd = [
+                "streamlit", "run", 
+                streamlit_app_path,
+                "--server.port", str(parsed_args.port)
+            ]
+            
+            logger.info("Running Streamlit", command=" ".join(cmd))
+            
+            # Execute the command
+            process = subprocess.run(cmd)
+            return process.returncode
+            
+        elif parsed_args.command == "analyze":
             logger.info("Analyzing document", file=parsed_args.file)
             # Call the appropriate function
             # analyze_document(parsed_args.file)

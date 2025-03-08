@@ -17,6 +17,14 @@ dependencies = [
     "pandas",
     "structlog",
     "rich",
+    "streamlit",
+    "langchain",
+    "langchain-community",
+    "langchain-experimental",
+    "faiss-cpu",
+    "sentence-transformers",
+    "pdfplumber",
+    "ollama",
 ]
 
 [project.scripts]
